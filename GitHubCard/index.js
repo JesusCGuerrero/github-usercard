@@ -2,6 +2,41 @@
            (replacing the palceholder with your Github name):
            https://api.github.com/users/<your name>
 */
+const followersArray = [];
+
+axios.get('https://api.github.com/users/JesusCGuerrero')
+  .then(response => {
+    parent.append(cardMaker(response.data))
+  })
+  .catch(error => {
+  console.log("Data could not be returned", error)
+  })
+
+axios.get('https://api.github.com/users/JesusCGuerrero/followers')
+  .then(response => {
+    // console.log(response.data)
+    response.data.forEach(data => {
+      // parent.append(followerCardMaker(data))
+      followersArray.push(data.login);
+
+    })
+    
+    followersArray.forEach(array => {
+      axios.get(`https://api.github.com/users/${array}`)
+    .then(response => {
+      console.log(response)
+      parent.append(cardMaker(response.data))
+    })
+    .catch(error => {
+    console.log("Data could not be returned", error)
+    })
+
+  })
+
+  })
+  .catch(error => {
+    console.log("Data could not be returned", error)
+    })
 
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
@@ -24,7 +59,11 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+
+
+
+
+// followersArray = 
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -43,8 +82,94 @@ const followersArray = [];
     <p>Bio: {users bio}</p>
   </div>
 </div>
-
 */
+const parent = document.querySelector('.cards')
+
+function cardMaker(object) {
+  const card = document.createElement('div');
+  const img = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const name = document.createElement('h3');
+  const userName = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const anchor = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  card.classList.add('card');
+  cardInfo.classList.add('card-info');
+  name.classList.add('name');
+  userName.classList.add('username');
+
+  card.append(img);
+  card.append(cardInfo);
+  cardInfo.append(name);
+  cardInfo.append(userName);
+  cardInfo.append(location);
+  cardInfo.append(profile);
+  cardInfo.append(followers);
+  cardInfo.append(following);
+  cardInfo.append(bio);
+
+  name.textContent = object.name;
+  userName.textContent = object.login;
+  location.textContent = `Location: ${object.location}`;
+  profile.textContent = `Profile: `;
+  anchor.textContent = object.html_url;
+  img.src = object.avatar_url;
+  followers.textContent = `Followers: ${object.followers}`;
+  following.textContent = `Following: ${object.following}`;
+  bio.textContent = `Bio: ${object.bio}`;
+
+  anchor.setAttribute('href', object.html_url);
+
+  profile.append(anchor);
+
+  return card;
+};
+
+function followerCardMaker(object) {
+  const card = document.createElement('div');
+  const img = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const userName = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const anchor = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  card.classList.add('card');
+  cardInfo.classList.add('card-info');
+  userName.classList.add('username');
+
+  card.append(img);
+  card.append(cardInfo);
+  cardInfo.append(userName);
+  cardInfo.append(location);
+  cardInfo.append(profile);
+  cardInfo.append(followers);
+  cardInfo.append(following);
+  cardInfo.append(bio);
+
+  userName.textContent = object.login;
+  location.textContent = `Location: ${object.location}`;
+  profile.textContent = `Profile: `;
+  anchor.textContent = object.html_url;
+  img.src = object.avatar_url;
+  followers.textContent = `Followers: ${object.followers}`;
+  following.textContent = `Following: ${object.following}`;
+  bio.textContent = `Bio: ${object.bio}`;
+
+  anchor.setAttribute('href', object.html_url);
+
+  profile.append(anchor);
+
+  return card;
+};
 
 /* List of LS Instructors Github username's: 
   tetondan
